@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="user">
+	<typeAlias alias="UserVo" type="com.jten2015.ebike.vo.UserVo" />
+
+	<resultMap class="UserVo" id="resultMapList">
+		<result column="USERNO" property="userNo"/>
+		<result column="USERTYPE" property="userType"/>	
+		<result column="USERNAME" property="userName"/>		
+		<result column="USERID" property="userId"/>
+		<result column="USERPASSWORD" property="password"/>	
+		<result column="USERBIRTH" property="birth"/>	
+		<result column="USERPHONE" property="phone"/>	
+		<result column="USERCELLPHONE" property="cellPhone"/>	
+		<result column="USERZIPCODE" property="zipCode"/>	
+		<result column="USERADDRESS" property="address"/>	
+		<result column="USEREMAIL" property="email"/>	
+		<result column="USERSTATUS" property="userStatus"/>			
+	</resultMap>
+
+	<insert id="insertVo" parameterClass="UserVo">
+		<![CDATA[
+			insert
+			  into myuser
+			values (myuser_seq.nextval, #userType#, #userName#, #userId#, #password#, #birth#, #phone#, #cellPhone#, #zipCode#, #address#, #email#, #userStatus# )
+		]]>
+	</insert>
+	
+	<select id="getVo" parameterClass="java.util.Map" resultClass="UserVo" resultMap="resultMapList" >
+		<![CDATA[
+			select *
+			  from myuser
+			 where userId = #userId#
+			   and userPassword = #userPassword#		
+		]]>
+	</select>
+
+	<select id="getList" parameterClass="Long" resultClass="UserVo" resultMap="resultMapList" >
+		<![CDATA[
+			select * 
+			  from (SELECT  A.*, rownum as rnum, floor((rownum-1)/2+1) as page, count(*) over() as totcnt
+					  FROM (SELECT *
+					 	   	  FROM myuser) A )
+			 where page = #page#		
+		]]>
+	</select>
+	
+	<select id="getListByName" parameterClass="String" resultClass="UserVo" resultMap="resultMapList" >
+		<![CDATA[
+			select * 
+			  from (SELECT  A.*, rownum as rnum, floor((rownum-1)/2+1) as page, count(*) over() as totcnt
+					  FROM (SELECT *
+					 	   	  FROM myuser) A )
+			 where userName = #name#		
+		]]>
+	</select>
+	
+	<select id="getListById" parameterClass="String" resultClass="UserVo" resultMap="resultMapList" >
+		<![CDATA[
+			select * 
+			  from (SELECT  A.*, rownum as rnum, floor((rownum-1)/2+1) as page, count(*) over() as totcnt
+					  FROM (SELECT *
+					 	   	  FROM myuser) A )
+			 where userId = #id#		
+		]]>
+	</select>
+	
+	<select id="getTotal" resultClass="Long">
+		<![CDATA[
+			select count(*) from myuser
+		]]>
+	</select>
+		
+</sqlMap>
